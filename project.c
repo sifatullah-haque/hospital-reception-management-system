@@ -1,7 +1,20 @@
+// This program is a hospital reception management system that allows the user to:
+// 1. Admit a patient
+// 2. Display the list of all admitted patients
+// 3. Discharge a patient
+// 4. Add a doctor
+// 5. Display the list of all doctors
+// The program uses structures to store patient and doctor information and file handling to store the data in files.
+
+
+
+
 
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
+
+// structure for patient information
 
 struct patient{
     int id;
@@ -11,6 +24,8 @@ struct patient{
     char date[12];
 }p;
 
+// structure for doctor information
+
 struct doctor{
     int id;
     char name[50];
@@ -18,6 +33,9 @@ struct doctor{
     char specialize[50];
     char date[12];
 }d;
+
+
+// file pointer to access files
 
 FILE *fp;
 
@@ -73,12 +91,22 @@ int main(){
     return 0;
 }
 
+// function to admit a new patient
+
 void admitPatient(){
     char myDate[12];
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
+
+    // format the date as dd/mm/yyyy
+
     sprintf(myDate, "%02d/%02d/%d", tm.tm_mday, tm.tm_mon+1, tm.tm_year + 1900);
+
+    // copy the date to the patient structure
+
     strcpy(p.date, myDate);
+
+    // open the patient file in binary append mode
 
     fp = fopen("patient.txt", "ab");
 
@@ -99,10 +127,20 @@ void admitPatient(){
 
     printf("\nPatient Added Successfully");
 
+
+
+    // write the patient structure to the file
+
     fwrite(&p, sizeof(p), 1, fp);
     fclose(fp);
 }
 
+
+
+
+
+
+// function to display the list of all admitted patients
 void patientList(){
 
     system("cls");
@@ -118,6 +156,7 @@ void patientList(){
     fclose(fp);
 }
 
+// function to discharge a patient
 
 void dischargePatient(){
     int id, f=0;
@@ -126,16 +165,26 @@ void dischargePatient(){
     printf("Enter Patient id to discharge: ");
     scanf("%d", &id);
 
+
+
+
     FILE *ft;
 
+    // open the patient file in binary read mode
+
     fp = fopen("patient.txt", "rb");
+
+    // open a temporary file in binary write mode
+
     ft = fopen("temp.txt", "wb");
 
     while(fread(&p, sizeof(p), 1, fp) == 1){
 
         if(id == p.id){
+                // set the flag to indicate that the patient is found
             f=1;
         }else{
+            // write the patient information to the temporary file
             fwrite(&p, sizeof(p), 1, ft);
         }
     }
@@ -153,7 +202,7 @@ void dischargePatient(){
     rename("temp.txt", "patient.txt");
 
 }
-
+// function to add a Doctor
 void addDoctor(){
 
     char myDate[12];
@@ -191,7 +240,7 @@ void addDoctor(){
 }
 
 
-
+// function to to see doctor list
 void doctorList(){
     system("cls");
     printf("<== Doctor List ==>\n\n");
@@ -206,3 +255,25 @@ void doctorList(){
 
     fclose(fp);
 }
+/*
+This is a C program for a Hospital Reception Management System. The program provides various options to the user such as admitting a new patient, displaying a list of patients, discharging a patient, adding a new doctor, and displaying a list of doctors. The program uses structures to store information about patients and doctors, and uses file handling to read and write data to external files.
+
+The program starts by displaying a menu with various options. The user can choose an option by entering the corresponding number. The program uses a switch statement to perform different tasks based on the user's choice.
+
+The main function calls different functions for each option selected. Here is a brief description of each function:
+
+    admitPatient(): This function adds a new patient to the system. It asks the user to enter the patient's id, name, address, disease, and current date. Then it stores the patient information in a file named "patient.txt".
+
+    patientList(): This function displays a list of all patients in the system. It reads patient information from the "patient.txt" file and displays it on the screen in a tabular format.
+
+    dischargePatient(): This function removes a patient from the system. It asks the user to enter the patient's id and then searches for the patient in the "patient.txt" file. If found, it removes the patient's information from the file. Otherwise, it displays an error message.
+
+    addDoctor(): This function adds a new doctor to the system. It asks the user to enter the doctor's id, name, address, specialization, and current date. Then it stores the doctor information in a file named "doctor.txt".
+
+    doctorList(): This function displays a list of all doctors in the system. It reads doctor information from the "doctor.txt" file and displays it on the screen in a tabular format.
+
+The program also uses the time.h header file to get the current date and time. The program generates the current date and stores it in the patient and doctor structures when a new patient or doctor is added to the system. The program also uses the stdlib.h header file to exit the program and the conio.h header file to wait for a key press before continuing.
+
+Note that this code has potential security vulnerabilities because it uses the unsafe functions fflush(), gets(), and scanf(). It is recommended to use the safer functions such as fgets() and scanf_s() instead.
+
+*/
